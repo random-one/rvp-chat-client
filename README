@@ -1,0 +1,10 @@
+ChatClient
+
+Simple Client/Server based chat client
+
+Run:
+    command line:
+	'java ChatClient.ChatClient' // executes the server code
+	'java ChatClient.ChatClient client' // executes the client code
+    eclipse:
+	from the run menu (executes the server code with no arguments provided)
