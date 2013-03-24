@@ -27,13 +27,14 @@ public class ClientSide {
 		this.message = message;
 	}
 
-	public void sendMessage(String msg)
+	public void sendMessage(Message msg)
 	{
 		try
 		{
 			out.writeObject(msg);
 			out.flush();
-			System.out.println("client sent > " + msg);
+			//TextMessage textMsg = (TextMessage) msg;
+			//System.out.println(msg.getReceiver() + " message:" + textMsg.getContent());
 		}
 		catch(IOException e)
 		{
