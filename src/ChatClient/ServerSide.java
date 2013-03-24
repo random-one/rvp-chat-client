@@ -50,7 +50,7 @@ public class ServerSide {
 		{
 			System.out.println("Server is waiting to make a connection...!");
 			request = reply.accept();
-			System.out.println("Server accepted a connection!" + request.getInetAddress().getHostAddress());
+			System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
@@ -75,16 +75,16 @@ public class ServerSide {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
 		}
-		finally{
-			try{
-				in.close();
-				out.close();
-				reply.close();
-			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
-			}
-		}
+//		finally{
+//			try{
+//				in.close();
+//				out.close();
+//				reply.close();
+//			}
+//			catch(IOException ioException){
+//				ioException.printStackTrace();
+//			}
+//		}
 	}
 
 	public void sendMessage(String msg)
@@ -100,7 +100,7 @@ public class ServerSide {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException{
 		ServerSide server = new ServerSide();
