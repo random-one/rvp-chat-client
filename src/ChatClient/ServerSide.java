@@ -35,11 +35,19 @@ public class ServerSide {
 
 	}
 
+	public void bindServer()
+	{
+		try {
+			reply = new ServerSocket(2151, 5);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void serverRun()
 	{
 		try
 		{
-			reply = new ServerSocket(2151, 5);
 			System.out.println("Server is waiting to make a connection...!");
 			request = reply.accept();
 			System.out.println("Server accepted a connection!" + request.getInetAddress().getHostAddress());
@@ -96,6 +104,7 @@ public class ServerSide {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException{
 		ServerSide server = new ServerSide();
+		server.bindServer();
 		while(true){
 			server.serverRun();
 		}
