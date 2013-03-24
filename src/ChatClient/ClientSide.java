@@ -76,17 +76,7 @@ public class ClientSide {
 		{
 			System.out.println(e.getMessage());
 		}
-		finally{
 
-			try{
-				in.close();
-				out.close();
-				request.close();
-			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
-			}
-		}
 	}
 
 	public static void main(String[] args) {
