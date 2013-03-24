@@ -12,6 +12,7 @@ public class ClientSide {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private String message;
+	//TODO: add Set<FileMessage> receivedFiles;
 
 	ClientSide()
 	{
