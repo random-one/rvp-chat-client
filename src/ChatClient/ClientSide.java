@@ -11,12 +11,20 @@ public class ClientSide {
 	private Socket request;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
-	private String message;
+	private Message message;
 	//TODO: add Set<FileMessage> receivedFiles;
 
 	ClientSide()
 	{
 
+	}
+
+	public Message getMessage() {
+		return message;
+	}
+
+	public void setMessage(Message message) {
+		this.message = message;
 	}
 
 	public void sendMessage(String msg)
