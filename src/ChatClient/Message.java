@@ -9,6 +9,7 @@ public class Message implements java.io.Serializable {
 	public enum msgType {TEXT_MESSAGE, FILE_MESSAGE};
 	private msgType type;
 
+	public Message() { }
 	public Message(String sender, String receiver, msgType type)
 	{
 		this.sender = sender;
