@@ -28,7 +28,7 @@ public class ServerSide {
 	Socket request;
 	ObjectInputStream in;
 	ObjectOutputStream out;
-	String message;
+	Message message;
 
 	ServerSide()
 	{
@@ -54,22 +54,21 @@ public class ServerSide {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
-			sendMessage("Connection accepted!");
-			do
+			try
 			{
-				try
-				{
-					message = (String)in.readObject();
-					System.out.println("received from client >" + message);
-					if(message.equals("Bye!"))
-						sendMessage("Bye!");
+				message = (Message)in.readObject();
+				System.out.println("received from client");
+				if (message.getType() == Message.msgType.TEXT_MESSAGE) {
+					TextMessage tm = (TextMessage)message;
+					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
 				}
-				catch (ClassNotFoundException e) {
-					// TODO: handle exception
-					System.out.println(e.getMessage());
-				}
-			}while(!message.equals("Bye!"));
-
+				out.writeObject(message);
+				out.flush();
+			}
+			catch (ClassNotFoundException e) {
+				// TODO: handle exception
+				System.out.println(e.getMessage());
+			}
 		}
 		catch (IOException e) {
 			// TODO: handle exception
@@ -87,13 +86,16 @@ public class ServerSide {
 //		}
 	}
 
-	public void sendMessage(String msg)
+	public void sendMessage(Message msg)
 	{
 		try
 		{
 			out.writeObject(msg);
 			out.flush();
-			System.out.println("server sent >" + msg);
+			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
+				TextMessage tm = (TextMessage) msg;
+				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+			}
 		}
 		catch(IOException e)
 		{
