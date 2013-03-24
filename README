@@ -1,10 +1,8 @@
 ChatClient
 
-Simple Client/Server based chat client
+Simple Client/Server based chat client with sockets
 
 Run:
     command line:
-	'java ChatClient.ChatClient' // executes the server code
-	'java ChatClient.ChatClient client' // executes the client code
-    eclipse:
-	from the run menu (executes the server code with no arguments provided)
+	'java ChatClient.ServerSide' // executes the server code
+	'java ChatClient.ClientSide' // executes the client code
