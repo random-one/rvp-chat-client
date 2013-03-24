@@ -40,12 +40,15 @@ public class ClientSide {
 		{
 			System.out.println(e.getMessage());
 		}
+		// TODO: maybe add finally block to close the streams
+	}
 	}
 
 	public void runClient()
 	{
 		try
 		{
+			// TODO: bind each client to the server ip!!
 			request = new Socket("",2151);
 			System.out.println("Connected?!");
 			out = new ObjectOutputStream(request.getOutputStream());
