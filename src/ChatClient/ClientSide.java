@@ -7,10 +7,12 @@ import java.net.UnknownHostException;
 
 
 public class ClientSide {
-	Socket request;
-	ObjectInputStream in;
-	ObjectOutputStream out;
-	String message;
+
+	private Socket request;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
+	private String message;
+
 	ClientSide()
 	{
 
