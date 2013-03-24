@@ -71,20 +71,7 @@ public class ClientSide {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
-			do
-			{
-				try
-				{
-					message = (String)in.readObject();
-					System.out.println("server sent >" + message);
-					message = "Bye!";
-					sendMessage(message);
-				}
-				catch(ClassNotFoundException cnfe)
-				{
-					System.out.println(cnfe.getMessage());
-				}
-			}while(!message.equals("Bye!"));
+			//TODO: process received files by type
 		}
 		catch(UnknownHostException unknownHost){
 			System.err.println("You are trying to connect to an unknown host!");
