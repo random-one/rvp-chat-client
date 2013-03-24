@@ -42,6 +42,23 @@ public class ClientSide {
 		}
 		// TODO: maybe add finally block to close the streams
 	}
+
+	public Message receiveMessage()
+	{
+		try {
+			message = (Message)in.readObject();
+			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
+				TextMessage tm = (TextMessage) message;
+				System.out.println("received from server: " + tm.getContent());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return message;
 	}
 
 	public void runClient()
