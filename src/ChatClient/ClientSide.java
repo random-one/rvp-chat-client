@@ -87,5 +87,9 @@ public class ClientSide {
 		// TODO Auto-generated method stub
 		ClientSide client = new ClientSide();
 		client.runClient();
+		// TODO: fill sender and receiver IP's of message, empty works only for localhost
+		TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
+		client.sendMessage(tm);
+		client.setMessage(client.receiveMessage());
 	}
 }
