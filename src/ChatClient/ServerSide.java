@@ -29,12 +29,12 @@ public class ServerSide {
 	ObjectInputStream in;
 	ObjectOutputStream out;
 	String message;
-	
+
 	ServerSide()
 	{
-		
+
 	}
-	
+
 	public void serverRun()
 	{
 		try
@@ -61,24 +61,24 @@ public class ServerSide {
 					System.out.println(e.getMessage());
 				}
 			}while(!message.equals("Bye!"));
-			
+
 		}
 		catch (IOException e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
 		}
-    	finally{
-    		try{
-    			in.close();
-    			out.close();
-    			reply.close();
-    		}
-    		catch(IOException ioException){
-    			ioException.printStackTrace();
-    		}
-    	}
+		finally{
+			try{
+				in.close();
+				out.close();
+				reply.close();
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			}
+		}
 	}
-	
+
 	public void sendMessage(String msg)
 	{
 		try
@@ -93,13 +93,13 @@ public class ServerSide {
 		}
 	}
 	
-    static boolean verify(String login, char[] password) {
-        // This method always returns
-        // true in this example.
-        // Modify this method to verify
-        // password according to your rules.
-        return true;
-    }
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException{
+		ServerSide server = new ServerSide();
+		while(true){
+			server.serverRun();
+		}
+	}
 }
 
 

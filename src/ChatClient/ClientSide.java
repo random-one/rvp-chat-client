@@ -13,9 +13,9 @@ public class ClientSide {
 	String message;
 	ClientSide()
 	{
-		
+
 	}
-	
+
 	public void sendMessage(String msg)
 	{
 		try
@@ -29,7 +29,7 @@ public class ClientSide {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public void runClient()
 	{
 		try
@@ -54,23 +54,29 @@ public class ClientSide {
 				}
 			}while(!message.equals("Bye!"));
 		}
-    	catch(UnknownHostException unknownHost){
-    		System.err.println("You are trying to connect to an unknown host!");
-    	}
+		catch(UnknownHostException unknownHost){
+			System.err.println("You are trying to connect to an unknown host!");
+		}
 		catch(IOException e)
 		{
 			System.out.println(e.getMessage());
 		}
-    	finally{
-    		
-    		try{
-    			in.close();
-    			out.close();
-    			request.close();
-    			}
-    		catch(IOException ioException){
-    			ioException.printStackTrace();
-    		}
-    	}
+		finally{
+
+			try{
+				in.close();
+				out.close();
+				request.close();
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ClientSide client = new ClientSide();
+		client.runClient();
 	}
 }
