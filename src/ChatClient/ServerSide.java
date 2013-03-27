@@ -104,7 +104,7 @@ public class ServerSide {
 	}
 
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException{
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		ServerSide server = new ServerSide();
 		server.bindServer();
 		while(true){
