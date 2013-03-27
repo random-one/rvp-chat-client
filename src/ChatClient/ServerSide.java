@@ -37,40 +37,21 @@ public class ServerSide {
 	{
 		try {
 			reply = new ServerSocket(2151, 5);
+
+			clients = new Vector<Socket>();
+			System.out.println("Server is waiting to make a connection...!");
+
+			while (true) {
+				request = reply.accept();
+				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
+				try {
+					ClientConnection con = new ClientConnection(request);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public void serverRun()
-	{
-		try
-		{
-			System.out.println("Server is waiting to make a connection...!");
-			request = reply.accept();
-			System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
-			out = new ObjectOutputStream(request.getOutputStream());
-			out.flush();
-			in = new ObjectInputStream(request.getInputStream());
-			try
-			{
-				message = (Message)in.readObject();
-				System.out.println("received from client");
-				if (message.getType() == Message.msgType.TEXT_MESSAGE) {
-					TextMessage tm = (TextMessage)message;
-					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
-				}
-				out.writeObject(message);
-				out.flush();
-			}
-			catch (ClassNotFoundException e) {
-				// TODO: handle exception
-				System.out.println(e.getMessage());
-			}
-		}
-		catch (IOException e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
 		}
 //		finally{
 //			try{
@@ -104,10 +85,6 @@ public class ServerSide {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		ServerSide server = new ServerSide();
-		server.bindServer();
-		while(true){
-			server.serverRun();
-		}
 	}
 }
 
