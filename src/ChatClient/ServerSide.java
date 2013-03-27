@@ -53,16 +53,6 @@ public class ServerSide {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-//		finally{
-//			try{
-//				in.close();
-//				out.close();
-//				reply.close();
-//			}
-//			catch(IOException ioException){
-//				ioException.printStackTrace();
-//			}
-//		}
 	}
 
 	public void sendMessage(Message msg)

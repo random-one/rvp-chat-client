@@ -12,9 +12,6 @@ public class ChatClient {
 		// TODO Auto-generated method stub
 		if (args.length == 0) {
 	    	ServerSide server = new ServerSide();
-	    	while(true){
-	    		server.serverRun();
-	    	}
 		} else {
 			ClientSide client = new ClientSide();
 			client.runClient();
