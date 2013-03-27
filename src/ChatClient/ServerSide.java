@@ -14,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.Object;
@@ -30,12 +31,9 @@ public class ServerSide {
 	ObjectOutputStream out;
 	Message message;
 
+	static Vector<Socket> clients;
+
 	ServerSide()
-	{
-
-	}
-
-	public void bindServer()
 	{
 		try {
 			reply = new ServerSocket(2151, 5);
