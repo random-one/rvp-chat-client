@@ -6,9 +6,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
-public class ClientSide {
+public class ClientSide implements Runnable {
 
+	private String clientName;
 	private Socket request;
+	private Thread thread = null;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Message message;
@@ -16,7 +18,28 @@ public class ClientSide {
 
 	ClientSide()
 	{
+		try {
+			// TODO: bind each client to the server ip!!
+			request = new Socket("192.168.0.105",2151);
+			System.out.println("Connected?!");
+			out = new ObjectOutputStream(request.getOutputStream());
+			out.flush();
+			in = new ObjectInputStream(request.getInputStream());
 
+			thread = new Thread();
+			thread.start();
+		} catch(UnknownHostException unknownHost) {
+			System.err.println("You are trying to connect to an unknown host!");
+		} catch(IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public void run() {
+		while(true)
+		{
+			//TODO: process received files by type
+		}
 	}
 
 	public Message getMessage() {
@@ -63,30 +86,12 @@ public class ClientSide {
 
 	public void runClient()
 	{
-		try
-		{
-			// TODO: bind each client to the server ip!!
-			request = new Socket("",2151);
-			System.out.println("Connected?!");
-			out = new ObjectOutputStream(request.getOutputStream());
-			out.flush();
-			in = new ObjectInputStream(request.getInputStream());
-			//TODO: process received files by type
-		}
-		catch(UnknownHostException unknownHost){
-			System.err.println("You are trying to connect to an unknown host!");
-		}
-		catch(IOException e)
-		{
-			System.out.println(e.getMessage());
-		}
-
+		//TODO: process received files by type
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ClientSide client = new ClientSide();
-		client.runClient();
 		// TODO: fill sender and receiver IP's of message, empty works only for localhost
 		TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
 		client.sendMessage(tm);
