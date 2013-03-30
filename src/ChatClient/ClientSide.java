@@ -1,4 +1,5 @@
 package ChatClient;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -87,10 +88,15 @@ public class ClientSide implements Runnable {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClientSide client = new ClientSide();
-		// TODO: fill sender and receiver IP's of message, empty works only for localhost
-		TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
-		client.sendMessage(tm);
-		client.setMessage(client.receiveMessage());
+		try {
+			ClientSide client = new ClientSide();
+			// TODO: fill sender and receiver IP's of message, empty works only for localhost
+			TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
+			client.sendMessage(tm);
+			client.setMessage(client.receiveMessage());
+		}
+		catch (NullPointerException e) {
+			System.err.println("No connection to server!");
+		}
 	}
 }
