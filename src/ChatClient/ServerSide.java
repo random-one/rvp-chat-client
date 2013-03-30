@@ -46,7 +46,13 @@ public class ServerSide {
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 				try {
 					ClientConnection con = new ClientConnection(request);
-				} catch (Exception e) {
+				} catch(EOFException eofe)
+				{
+					request.close();
+					break;
+				}
+				catch(Exception e)
+				{
 					e.printStackTrace();
 				}
 			}

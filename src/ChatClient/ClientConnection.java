@@ -1,5 +1,7 @@
 package ChatClient;
 import java.net.Socket;
+import java.io.EOFException;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 
@@ -28,6 +30,14 @@ public class ClientConnection extends Thread {
 				if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 					TextMessage tm = (TextMessage)message;
 					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+				}
+			} catch (EOFException e) {
+				try {
+					request.close();
+					ServerSide.clients.remove(request);
+					break;
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
