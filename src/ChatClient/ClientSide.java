@@ -42,6 +42,16 @@ public class ClientSide implements Runnable {
 			//TODO: process received files by type
 		}
 	}
+	
+	public void disconnect()
+	{
+		try {
+			request.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public Message getMessage() {
 		return message;
