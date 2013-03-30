@@ -14,7 +14,7 @@ public class ChatClient {
 	    	ServerSide server = new ServerSide();
 		} else {
 			ClientSide client = new ClientSide();
-			client.runClient();
+			//client.runClient();
 		}
 	}
 }
