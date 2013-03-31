@@ -168,7 +168,7 @@ public class ClientView {
         mainPane.add(middleSplit, BorderLayout.CENTER);
         mainPane.add(connectionPane, BorderLayout.NORTH);
         
-        JFrame mainFrame = new JFrame("Simple Form");
+        JFrame mainFrame = new JFrame("RVP Chat Client");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setContentPane(mainPane);
         mainFrame.setSize(mainFrame.getPreferredSize());
