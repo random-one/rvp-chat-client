@@ -26,7 +26,7 @@ public class ClientView {
         //Friend list Panel
         JPanel friendPane = new JPanel(new BorderLayout());
         JButton addFriend = new JButton("Add Friend");
-        ActionAdapter addFriendToList = new ActionAdapter(){
+        ActionListener addFriendToList = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 /*
                  * view list and add friend
@@ -53,7 +53,7 @@ public class ClientView {
         JPanel buttonsPane = new JPanel(new GridLayout(1, 2));
         JButton sendButton = new JButton("Send");
         JButton fileButton = new JButton("File send");
-        ActionAdapter sendClick = new ActionAdapter(){
+        ActionListener sendClick = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 /*
                  * send message
@@ -75,7 +75,7 @@ public class ClientView {
             	}
             }
         };
-        ActionAdapter openFileDialog = new ActionAdapter(){
+        ActionListener openFileDialog = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 JFileChooser fc = new JFileChooser();
                 //fc.showOpenDialog();
@@ -122,7 +122,7 @@ public class ClientView {
         JLabel portLbl = new JLabel("port:");
         NumericTextField portText = new NumericTextField(5);
         //JFormattedTextField portText = new JFormattedTextField();
-        ActionAdapter connectAction = new ActionAdapter(){
+        ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
             	client = new ClientSide();
                 connectBtn.setEnabled(false);
@@ -135,7 +135,7 @@ public class ClientView {
         connectBtn = new JButton("Connect");
         connectBtn.addActionListener(connectAction);
         connectBtn.setEnabled(true);
-        ActionAdapter disconnectAction = new ActionAdapter(){
+        ActionListener disconnectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
             	client.disconnect();
             	System.out.println("Client has disconnected from server (socket is closed)...");
@@ -176,10 +176,6 @@ public class ClientView {
         
         mainFrame.setVisible(true);
     }
-}
-
-class ActionAdapter implements ActionListener {
-   public void actionPerformed(ActionEvent e) {}
 }
 
 class NumericTextField extends TextField
