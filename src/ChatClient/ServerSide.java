@@ -43,6 +43,7 @@ public class ServerSide {
 
 			while (true) {
 				request = reply.accept();
+				clients.add(request);
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 				try {
 					ClientConnection con = new ClientConnection(request);

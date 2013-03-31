@@ -21,7 +21,7 @@ public class ClientSide implements Runnable {
 	{
 		try {
 			// TODO: bind each client to the server ip!!
-			request = new Socket("192.168.0.105",2151);
+			request = new Socket("localhost",2151);
 			System.out.println("Connected?!");
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
@@ -46,10 +46,18 @@ public class ClientSide implements Runnable {
 	public void disconnect()
 	{
 		try {
-			request.close();
+			this.request.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				this.in.close();
+				this.out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -59,6 +67,11 @@ public class ClientSide implements Runnable {
 
 	public void setMessage(Message message) {
 		this.message = message;
+	}
+	
+	public String getClientName()
+	{
+		return this.clientName;
 	}
 
 	public void sendMessage(Message msg)

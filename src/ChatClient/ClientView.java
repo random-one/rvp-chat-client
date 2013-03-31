@@ -14,6 +14,8 @@ public class ClientView {
     static private JButton connectBtn = null;
     static private JButton disconnectBtn = null;
     private ClientSide client;
+    private JTextArea chatLine;
+    private JTextArea friendList;
     
     public static void main(String[] args) {
         ClientView view = new ClientView();
@@ -29,11 +31,16 @@ public class ClientView {
                 /*
                  * view list and add friend
                  */
+            	//TODO:friendList not visible, can't add clients to list
+            	//Temporary solution, friendList is now a class member
+            	//TODO:Database row manipulation.
+            	//friendList.append(client.getClientName()+ "\n");
+            	//Added a manipulator for the friendList textArea
             }
         };
         addFriend.addActionListener(addFriendToList);
         addFriend.setEnabled(true);
-        JTextArea friendList = new JTextArea();
+        friendList = new JTextArea();
         friendList.setLineWrap(true);
         friendList.setEditable(false);
         JScrollPane friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -51,6 +58,21 @@ public class ClientView {
                 /*
                  * send message
                  */
+            	if(client == null)
+            	{
+            		System.out.println("Client not connected!");
+            	}
+            	else	
+            	{
+            		if(chatLine.getText() != "")
+            		{
+	            		TextMessage msgToSend = new TextMessage(client.getClientName(),"localhost",chatLine.getText());
+	            		client.sendMessage(msgToSend);
+	            		chatLine.setText("");
+	            		//TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
+	            		//TODO:See constructor when the msgToSend is formed to make the fix for the content field.
+            		}
+            	}
             }
         };
         ActionAdapter openFileDialog = new ActionAdapter(){
@@ -58,6 +80,7 @@ public class ClientView {
                 JFileChooser fc = new JFileChooser();
                 //fc.showOpenDialog();
                 int returnVal = fc.showOpenDialog(fc);
+                //TODO: Decide how to send file.
             }
         };
         sendButton.addActionListener(sendClick);
@@ -76,7 +99,8 @@ public class ClientView {
         chatText.setEditable(false);
         chatText.setForeground(Color.blue);
         JScrollPane chatTextScroll = new JScrollPane(chatText,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        JTextArea chatLine = new JTextArea();
+        chatLine = new JTextArea();
+        //chatLine was created here ^, now it is a class member.
         JSplitPane chatSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chatTextScroll, chatLine);
         chatSplit.setResizeWeight(1.0);
         chatSplit.setOneTouchExpandable(true);
@@ -114,6 +138,7 @@ public class ClientView {
         ActionAdapter disconnectAction = new ActionAdapter(){
             public void actionPerformed(ActionEvent e){
             	client.disconnect();
+            	System.out.println("Client has disconnected from server (socket is closed)...");
                 connectBtn.setEnabled(true);
                 disconnectBtn.setEnabled(false);
                 /*

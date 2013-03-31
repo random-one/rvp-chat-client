@@ -39,8 +39,9 @@ public class ClientConnection extends Thread {
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			}
+			catch (Exception e) {
+				//e.printStackTrace();
 			}
 		}
 	}
