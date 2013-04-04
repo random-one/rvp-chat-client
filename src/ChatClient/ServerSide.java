@@ -66,11 +66,15 @@ public class ServerSide {
 	{
 		try
 		{
-			out.writeObject(msg);
-			out.flush();
 			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage) msg;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+				if (clients.containsKey(tm.getReceiver())) {
+					System.out.println("printing to client");
+					out.flush();
+					out = (ObjectOutputStream) clients.get(tm.getReceiver()).getOutputStream();
+					out.writeObject(msg);
+				}
 			}
 		}
 		catch(IOException e)

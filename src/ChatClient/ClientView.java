@@ -49,32 +49,46 @@ public class ClientView {
         friendPane.add(friendListScroll, BorderLayout.CENTER);
         friendPane.setPreferredSize(new Dimension(200, 300));
         
+        //Chat Text
+        JPanel chatPane = new JPanel(new BorderLayout());
+        final JTextArea chatText = new JTextArea(10,35);
+        chatText.setLineWrap(true);
+        chatText.setEditable(false);
+        chatText.setForeground(Color.blue);
+        JScrollPane chatTextScroll = new JScrollPane(chatText,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         //Send buttons
         JPanel buttonsPane = new JPanel(new GridLayout(1, 2));
         JButton sendButton = new JButton("Send");
         JButton fileButton = new JButton("File send");
         ActionListener sendClick = new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+                public void actionPerformed(ActionEvent e){
                 /*
                  * send message
                  */
-            	if(client == null)
-            	{
-            		System.out.println("Client not connected!");
-            	}
-            	else	
-            	{
-            		if(chatLine.getText() != "")
-            		{
-	            		TextMessage msgToSend = new TextMessage(client.getClientName(),"localhost",chatLine.getText());
-	            		client.sendMessage(msgToSend);
-	            		chatLine.setText("");
-	            		//TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
-	            		//TODO:See constructor when the msgToSend is formed to make the fix for the content field.
-            		}
-            	}
+                 if(client == null)
+                 {
+                        System.out.println("Client not connected!");
+                 }
+                 else
+                 {
+                        if(chatLine.getText() != "")
+                        {
+                                TextMessage msgToSend = new TextMessage(client.getClientName(),"192.168.0.178",chatLine.getText());
+                                client.sendMessage(msgToSend);
+                                chatLine.setText("");
+                                //TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
+                                //TODO:See constructor when the msgToSend is formed to make the fix for the content field.
+                        }
+                        Message m = client.receiveMessage();
+                        if (m.getType() == Message.msgType.TEXT_MESSAGE) {
+                                TextMessage tm = (TextMessage) m;
+                                chatText.setText(chatText.getText() + "\n" + tm.getContent());
+                        }
+                }
             }
         };
+
         ActionListener openFileDialog = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 JFileChooser fc = new JFileChooser();
@@ -93,12 +107,6 @@ public class ClientView {
         friendPane.add(buttonsPane,BorderLayout.SOUTH);
 
         //Chat Pane
-        JPanel chatPane = new JPanel(new BorderLayout());
-        JTextArea chatText = new JTextArea(10,35);
-        chatText.setLineWrap(true);
-        chatText.setEditable(false);
-        chatText.setForeground(Color.blue);
-        JScrollPane chatTextScroll = new JScrollPane(chatText,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         chatLine = new JTextArea();
         //chatLine was created here ^, now it is a class member.
         JSplitPane chatSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chatTextScroll, chatLine);
