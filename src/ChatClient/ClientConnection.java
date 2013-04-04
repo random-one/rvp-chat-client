@@ -16,7 +16,7 @@ public class ClientConnection extends Thread {
 		in=new ObjectInputStream(request.getInputStream());
 		out=new ObjectOutputStream(request.getOutputStream());
 
-		ServerSide.clients.add(request);
+		//ServerSide.clients.put(request.getInetAddress().getHostAddress(), request);
 		start();
 	}
 
@@ -29,12 +29,17 @@ public class ClientConnection extends Thread {
 				System.out.println("received from client");
 				if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 					TextMessage tm = (TextMessage)message;
+					out.writeObject(message);
 					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+					if (ServerSide.clients.containsKey(tm.getReceiver())) {
+						System.out.println("printing to client");
+						((ObjectOutput) ServerSide.clients.get(tm.getReceiver())).writeObject(message);
+					}
 				}
 			} catch (EOFException e) {
 				try {
 					request.close();
-					ServerSide.clients.remove(request);
+					ServerSide.clients.remove(request.getInetAddress().getHostAddress());
 					break;
 				} catch (IOException ioe) {
 					ioe.printStackTrace();

@@ -13,8 +13,8 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Vector;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.Object;
@@ -31,19 +31,19 @@ public class ServerSide {
 	ObjectOutputStream out;
 	Message message;
 
-	static Vector<Socket> clients;
+	static HashMap<String, Socket> clients;
 
 	ServerSide()
 	{
 		try {
 			reply = new ServerSocket(2151, 5);
 
-			clients = new Vector<Socket>();
+			clients = new HashMap<String, Socket>();
 			System.out.println("Server is waiting to make a connection...!");
 
 			while (true) {
 				request = reply.accept();
-				clients.add(request);
+				clients.put(request.getInetAddress().getHostAddress(), request);
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 				try {
 					ClientConnection con = new ClientConnection(request);
@@ -66,11 +66,15 @@ public class ServerSide {
 	{
 		try
 		{
-			out.writeObject(msg);
-			out.flush();
 			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage) msg;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+				if (clients.containsKey(tm.getReceiver())) {
+					System.out.println("printing to client");
+					out.flush();
+					out = (ObjectOutputStream) clients.get(tm.getReceiver()).getOutputStream();
+					out.writeObject(msg);
+				}
 			}
 		}
 		catch(IOException e)
