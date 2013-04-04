@@ -101,15 +101,16 @@ public class ClientView {
                         {
                                 TextMessage msgToSend = new TextMessage(client.getClientName(),"",chatLine.getText());
                                 client.sendMessage(msgToSend);
+                                chatText.setText(chatText.getText() + "\n" + msgToSend.getContent());
                                 chatLine.setText("");
                                 //TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
                                 //TODO:See constructor when the msgToSend is formed to make the fix for the content field.
                         }
-                        Message m = client.receiveMessage();
-                        if (m.getType() == Message.msgType.TEXT_MESSAGE) {
-                                TextMessage tm = (TextMessage) m;
-                                chatText.setText(chatText.getText() + "\n" + tm.getContent());
-                        }
+                        //Message m = client.receiveMessage();
+                        //if (m.getType() == Message.msgType.TEXT_MESSAGE) {
+                        //       TextMessage tm = (TextMessage) m;
+                        //        chatText.setText(chatText.getText() + "\n" + tm.getContent());
+                        //}
                 }
             }
         };

@@ -3,15 +3,16 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 
-public class ClientSide implements Runnable {
+public class ClientSide extends Thread {
 
 	private String clientName;
 	private Socket request;
-	private Thread thread = null;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Message message;
@@ -27,8 +28,7 @@ public class ClientSide implements Runnable {
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
 
-			thread = new Thread();
-			thread.start();
+			start();
 		} catch(UnknownHostException unknownHost) {
 			System.err.println("You are trying to connect to an unknown host!");
 		} catch(IOException e) {
@@ -39,7 +39,22 @@ public class ClientSide implements Runnable {
 	public void run() {
 		while(true)
 		{
-			//TODO: process received files by type
+//			Message m;
+//			try {
+//				if (in.available() > 0) {
+//					m = (Message) in.readObject();
+//					System.out.println("client received a message");
+//				}
+//			}
+//			catch (StreamCorruptedException sce) {
+//				sce.printStackTrace();
+//			}
+//			catch (SocketException se) {
+//				se.printStackTrace();
+//			}
+//			catch(Exception e){
+//				e.printStackTrace();
+//			}
 		}
 	}
 	
