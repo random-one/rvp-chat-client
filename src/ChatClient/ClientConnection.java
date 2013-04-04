@@ -33,7 +33,8 @@ public class ClientConnection extends Thread {
 					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
 					if (ServerSide.clients.containsKey(tm.getReceiver())) {
 						System.out.println("printing to client");
-						((ObjectOutput) ServerSide.clients.get(tm.getReceiver())).writeObject(message);
+						ObjectOutputStream o = (ObjectOutputStream) ServerSide.clients.get(tm.getReceiver()).getOutputStream();
+						o.writeObject(message);
 					}
 				}
 			} catch (EOFException e) {
