@@ -11,11 +11,36 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class ClientView {
+    //buttons:
     static private JButton connectBtn = null;
     static private JButton disconnectBtn = null;
+    private JButton addFriend = null;
+    private JButton sendButton = null;
+    private JButton fileButton = null;
+    //Panels:
+    private JPanel friendPane = null;
+    private JScrollPane friendListScroll = null;
+    private JPanel buttonsPane = null;
+    private JPanel chatPane = null;
+    private JScrollPane chatTextScroll = null;
+    private JSplitPane chatSplit = null;
+    private JPanel connectionPane = null;
+    private JPanel mainPane = null;
+    private JSplitPane middleSplit = null;
+    private JFrame mainFrame = null;
+    //Text:
+    private JTextArea chatLine = null;
+    private JTextArea friendList = null;
+    private JTextArea chatText = null;
+    private JLabel ipLbl = null;
+    private JTextField ipText = null;
+    private JLabel portLbl = null;
+    private NumericTextField portText = null;
+    //menu:
+    private JMenuBar menuBar = null;
+    private JMenu fileMenu = null;
+    //other:
     private ClientSide client;
-    private JTextArea chatLine;
-    private JTextArea friendList;
     
     public static void main(String[] args) {
         ClientView view = new ClientView();
@@ -24,8 +49,8 @@ public class ClientView {
     
     private void GuiInit(){
         //Friend list Panel
-        JPanel friendPane = new JPanel(new BorderLayout());
-        JButton addFriend = new JButton("Add Friend");
+        friendPane = new JPanel(new BorderLayout());
+        addFriend = new JButton("Add Friend");
         ActionListener addFriendToList = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 /*
@@ -43,26 +68,26 @@ public class ClientView {
         friendList = new JTextArea();
         friendList.setLineWrap(true);
         friendList.setEditable(false);
-        JScrollPane friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         friendPane.add(addFriend, BorderLayout.NORTH);
         friendPane.add(friendListScroll, BorderLayout.CENTER);
         friendPane.setPreferredSize(new Dimension(200, 300));
         
         //Chat Text
-        JPanel chatPane = new JPanel(new BorderLayout());
-        final JTextArea chatText = new JTextArea(10,35);
+        chatPane = new JPanel(new BorderLayout());
+        chatText = new JTextArea(10,35);
         chatText.setLineWrap(true);
         chatText.setEditable(false);
         chatText.setForeground(Color.blue);
         JScrollPane chatTextScroll = new JScrollPane(chatText,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         //Send buttons
-        JPanel buttonsPane = new JPanel(new GridLayout(1, 2));
-        JButton sendButton = new JButton("Send");
-        JButton fileButton = new JButton("File send");
+        buttonsPane = new JPanel(new GridLayout(1, 2));
+        sendButton = new JButton("Send");
+        fileButton = new JButton("File send");
         ActionListener sendClick = new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e){
                 /*
                  * send message
                  */
@@ -109,7 +134,7 @@ public class ClientView {
         //Chat Pane
         chatLine = new JTextArea();
         //chatLine was created here ^, now it is a class member.
-        JSplitPane chatSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chatTextScroll, chatLine);
+        chatSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chatTextScroll, chatLine);
         chatSplit.setResizeWeight(1.0);
         chatSplit.setOneTouchExpandable(true);
         //chatSplit.setDividerLocation(500);
@@ -118,17 +143,17 @@ public class ClientView {
         //chatPane.setPreferredSize(new Dimension(500, 200));
         
         //Menu
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu("File");
         
         menuBar.add(fileMenu);
         
         //Connection & disconnection
-        JPanel connectionPane = new JPanel(new FlowLayout());
-        JLabel ipLbl = new JLabel("Server IP:");
-        JTextField ipText = new JTextField("127.0.0.1");
-        JLabel portLbl = new JLabel("port:");
-        NumericTextField portText = new NumericTextField(5);
+        connectionPane = new JPanel(new FlowLayout());
+        ipLbl = new JLabel("Server IP:");
+        ipText = new JTextField("127.0.0.1");
+        portLbl = new JLabel("port:");
+        portText = new NumericTextField(5);
         //JFormattedTextField portText = new JFormattedTextField();
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -167,8 +192,8 @@ public class ClientView {
         
         
         //Main Pane and connections
-        JPanel mainPane = new JPanel(new BorderLayout());
-        JSplitPane middleSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatSplit, friendPane);
+        mainPane = new JPanel(new BorderLayout());
+        middleSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatSplit, friendPane);
         middleSplit.setResizeWeight(1.0);
         middleSplit.setOneTouchExpandable(true);
         //middleSplit.setDividerLocation(500);
@@ -176,7 +201,7 @@ public class ClientView {
         mainPane.add(middleSplit, BorderLayout.CENTER);
         mainPane.add(connectionPane, BorderLayout.NORTH);
         
-        JFrame mainFrame = new JFrame("RVP Chat Client");
+        mainFrame = new JFrame("RVP Chat Client");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setContentPane(mainPane);
         mainFrame.setSize(mainFrame.getPreferredSize());
