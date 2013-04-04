@@ -74,7 +74,7 @@ public class ClientView {
                  {
                         if(chatLine.getText() != "")
                         {
-                                TextMessage msgToSend = new TextMessage(client.getClientName(),"192.168.0.178",chatLine.getText());
+                                TextMessage msgToSend = new TextMessage(client.getClientName(),"",chatLine.getText());
                                 client.sendMessage(msgToSend);
                                 chatLine.setText("");
                                 //TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
