@@ -16,7 +16,7 @@ public class ClientConnection extends Thread {
 		in=new ObjectInputStream(request.getInputStream());
 		out=new ObjectOutputStream(request.getOutputStream());
 
-		ServerSide.clients.add(request);
+		//ServerSide.clients.put(request.getInetAddress().getHostAddress(), request);
 		start();
 	}
 
@@ -34,7 +34,7 @@ public class ClientConnection extends Thread {
 			} catch (EOFException e) {
 				try {
 					request.close();
-					ServerSide.clients.remove(request);
+					ServerSide.clients.remove(request.getInetAddress().getHostAddress());
 					break;
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
