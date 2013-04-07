@@ -8,8 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-
-public class ClientSide extends Thread {
+public class ClientSide {
 
 	private String clientName;
 	private Socket request;
@@ -20,42 +19,33 @@ public class ClientSide extends Thread {
 
 	ClientSide()
 	{
+	}
+
+	public boolean start()
+	{
 		try {
 			// TODO: bind each client to the server ip!!
-			request = new Socket("localhost",2151);
-			System.out.println("Connected?!");
+			request = new Socket("192.168.0.105",2151);
+		} catch(UnknownHostException unknownHost) {
+			System.err.println("You are trying to connect to an unknown host!");
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Connected?!");
+		try {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
-
-			start();
-		} catch(UnknownHostException unknownHost) {
-			System.err.println("You are trying to connect to an unknown host!");
 		} catch(IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
+			return false;
 		}
-	}
 
-	public void run() {
-		while(true)
-		{
-//			Message m;
-//			try {
-//				if (in.available() > 0) {
-//					m = (Message) in.readObject();
-//					System.out.println("client received a message");
-//				}
-//			}
-//			catch (StreamCorruptedException sce) {
-//				sce.printStackTrace();
-//			}
-//			catch (SocketException se) {
-//				se.printStackTrace();
-//			}
-//			catch(Exception e){
-//				e.printStackTrace();
-//			}
-		}
+		new ListenFromServer().start();
+
+		return true;
 	}
 
 	public void disconnect()
@@ -147,6 +137,8 @@ public class ClientSide extends Thread {
 		// TODO Auto-generated method stub
 		try {
 			ClientSide client = new ClientSide();
+			if (!client.start())
+				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost
 			TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
 			client.sendMessage(tm);

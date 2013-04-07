@@ -159,6 +159,8 @@ public class ClientView {
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
             	client = new ClientSide();
+            	if (!client.start())
+            		return;
                 connectBtn.setEnabled(false);
                 disconnectBtn.setEnabled(true);
                 /*
