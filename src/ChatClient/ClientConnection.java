@@ -10,44 +10,93 @@ public class ClientConnection extends Thread {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 
-	ClientConnection(Socket client) throws Exception 
+	ClientConnection(Socket client) 
 	{
-		request = client;
-		in=new ObjectInputStream(request.getInputStream());
-		out=new ObjectOutputStream(request.getOutputStream());
-
-		//ServerSide.clients.put(request.getInetAddress().getHostAddress(), request);
-		start();
+		try
+		{
+			request = client;
+			out = new ObjectOutputStream(request.getOutputStream());
+			in = new ObjectInputStream(request.getInputStream());
+		} catch (IOException e) {
+			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
+			return;
+		}
 	}
 
 	public void run()
 	{
-		while (true)
-		{
+		boolean keepGoing = true;
+		Message message = null;
+
+		while(keepGoing) {
 			try {
-				Message message = (Message)in.readObject();
-				System.out.println("received from client");
-				if (message.getType() == Message.msgType.TEXT_MESSAGE) {
-					TextMessage tm = (TextMessage)message;
-					out.writeObject(message);
-					System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
-					if (ServerSide.clients.containsKey(tm.getReceiver())) {
-						System.out.println("printing to client");
-						((ObjectOutput) ServerSide.clients.get(tm.getReceiver())).writeObject(message);
+				try {
+					message = (Message)in.readObject();
+				} catch (EOFException e) {
+					try {
+						request.close();
+						ServerSide.clients.remove(request.getInetAddress().getHostAddress());
+						keepGoing = false;
+						break;
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
 					}
 				}
-			} catch (EOFException e) {
-				try {
-					request.close();
-					ServerSide.clients.remove(request.getInetAddress().getHostAddress());
-					break;
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} catch (ClassNotFoundException cnfe) {
+				cnfe.printStackTrace();
+			}
+
+			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
+				TextMessage tm = (TextMessage)message;
+				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+
+				if (ServerSide.clients.containsKey(tm.getReceiver())) {
+					ClientConnection c = ServerSide.clients.get(tm.getReceiver());
+					c.writeMessage(message);
 				}
 			}
-			catch (Exception e) {
-				//e.printStackTrace();
-			}
 		}
+	}
+
+	public void close()
+	{
+		try {
+			if (out != null)
+				out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if (in != null)
+				in.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if (request != null)
+				request.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean writeMessage(Message msg)
+	{
+		if(!request.isConnected()) {
+			close();
+			return false;
+		}
+		try {
+			out.writeObject(msg);
+		}
+		catch(IOException e) {
+			System.out.println("Error sending message to " + msg.getReceiver());
+		}
+		return true;
 	}
 }

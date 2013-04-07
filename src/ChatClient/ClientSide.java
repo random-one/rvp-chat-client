@@ -3,15 +3,15 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
-
-public class ClientSide implements Runnable {
+public class ClientSide {
 
 	private String clientName;
 	private Socket request;
-	private Thread thread = null;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Message message;
@@ -19,30 +19,35 @@ public class ClientSide implements Runnable {
 
 	ClientSide()
 	{
+	}
+
+	public boolean start()
+	{
 		try {
 			// TODO: bind each client to the server ip!!
-			request = new Socket("localhost",2151);
-			System.out.println("Connected?!");
+			request = new Socket("192.168.0.105",2151);
+		} catch(UnknownHostException unknownHost) {
+			System.err.println("You are trying to connect to an unknown host!");
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Connected?!");
+		try {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
-
-			thread = new Thread();
-			thread.start();
-		} catch(UnknownHostException unknownHost) {
-			System.err.println("You are trying to connect to an unknown host!");
 		} catch(IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
+			return false;
 		}
+
+		new ListenFromServer().start();
+
+		return true;
 	}
 
-	public void run() {
-		while(true)
-		{
-			//TODO: process received files by type
-		}
-	}
-	
 	public void disconnect()
 	{
 		try {
@@ -68,7 +73,7 @@ public class ClientSide implements Runnable {
 	public void setMessage(Message message) {
 		this.message = message;
 	}
-	
+
 	public String getClientName()
 	{
 		return this.clientName;
@@ -108,11 +113,32 @@ public class ClientSide implements Runnable {
 		return message;
 	}
 
+	class ListenFromServer extends Thread {
+
+		public void run() {
+			System.out.println("waiting for messages from server");
+			while(true) {
+				try {
+					Message msg = (Message) in.readObject();
+					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
+						System.out.println("received from server: " + ((TextMessage)msg).getContent());
+					}
+				} catch(IOException e) {
+					System.out.println("Server has closed the connection: " + e.getMessage());
+					break;
+				} catch(ClassNotFoundException cnfe) {
+					System.out.println(cnfe.getMessage());
+				}
+			}
+		}
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
 			ClientSide client = new ClientSide();
+			if (!client.start())
+				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost
 			TextMessage tm = new TextMessage("", "","This is a test message that should return to client");
 			client.sendMessage(tm);

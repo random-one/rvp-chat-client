@@ -30,32 +30,44 @@ public class ServerSide {
 	ObjectInputStream in;
 	ObjectOutputStream out;
 	Message message;
+	boolean keepGoing;
 
-	static HashMap<String, Socket> clients;
+	static HashMap<String, ClientConnection> clients;
 
 	ServerSide()
+	{
+		clients = new HashMap<String, ClientConnection>();
+	}
+
+	public void start()
 	{
 		try {
 			reply = new ServerSocket(2151, 5);
 
-			clients = new HashMap<String, Socket>();
 			System.out.println("Server is waiting to make a connection...!");
 
-			while (true) {
+			keepGoing = true;
+			while (keepGoing) {
 				request = reply.accept();
-				clients.put(request.getInetAddress().getHostAddress(), request);
-				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
-				try {
-					ClientConnection con = new ClientConnection(request);
-				} catch(EOFException eofe)
-				{
-					request.close();
+
+				if(!keepGoing)
 					break;
+
+				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
+
+				ClientConnection con = new ClientConnection(request);
+				clients.put(request.getInetAddress().getHostAddress(), con);
+				con.start();
+			}
+
+			try {
+				reply.close();
+				for (int x = 0; x < clients.size(); x++) {
+					ClientConnection s = clients.get(x);
+					s.close();
 				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+			} catch(Exception e) {
+				System.out.println("Exception closing the server and clients: " + e.getMessage());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -72,8 +84,8 @@ public class ServerSide {
 				if (clients.containsKey(tm.getReceiver())) {
 					System.out.println("printing to client");
 					out.flush();
-					out = (ObjectOutputStream) clients.get(tm.getReceiver()).getOutputStream();
-					out.writeObject(msg);
+					ClientConnection connection = clients.get(tm.getReceiver());
+					connection.writeMessage(msg);
 				}
 			}
 		}
@@ -86,6 +98,7 @@ public class ServerSide {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		ServerSide server = new ServerSide();
+		server.start();
 	}
 }
 
