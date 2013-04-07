@@ -57,7 +57,7 @@ public class ClientSide extends Thread {
 //			}
 		}
 	}
-	
+
 	public void disconnect()
 	{
 		try {
@@ -83,7 +83,7 @@ public class ClientSide extends Thread {
 	public void setMessage(Message message) {
 		this.message = message;
 	}
-	
+
 	public String getClientName()
 	{
 		return this.clientName;
