@@ -13,17 +13,21 @@ public class ClientSide {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Message message;
+	private String server;
+	private int port;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide()
+	ClientSide(String server, int port)
 	{
+		this.server = server;
+		this.port = port;
 	}
 
 	public boolean start()
 	{
 		try {
 			// TODO: bind each client to the server ip!!
-			request = new Socket("192.168.0.105",2151);
+			request = new Socket(server, port);
 		} catch(UnknownHostException unknownHost) {
 			System.err.println("You are trying to connect to an unknown host!");
 			return false;
@@ -134,7 +138,7 @@ public class ClientSide {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			ClientSide client = new ClientSide();
+			ClientSide client = new ClientSide("localhost", 2151);
 			if (!client.start())
 				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost

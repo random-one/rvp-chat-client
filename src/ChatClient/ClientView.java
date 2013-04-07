@@ -158,7 +158,7 @@ public class ClientView {
         //JFormattedTextField portText = new JFormattedTextField();
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
-            	client = new ClientSide();
+                client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()));
             	if (!client.start())
             		return;
                 connectBtn.setEnabled(false);

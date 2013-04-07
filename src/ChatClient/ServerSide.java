@@ -22,10 +22,11 @@ public class ServerSide {
 	ObjectOutputStream out;
 	Message message;
 	boolean keepGoing;
+	int port;
 
 	static HashMap<String, ClientConnection> clients;
 
-	ServerSide()
+	ServerSide(int port)
 	{
 		clients = new HashMap<String, ClientConnection>();
 	}
@@ -88,7 +89,13 @@ public class ServerSide {
 
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		ServerSide server = new ServerSide();
+		ServerSide server;
+		if (args.length == 2)
+			server = new ServerSide(Integer.parseInt(args[0]));
+		else {
+			System.out.println("No port provided: server started on port 2151");
+			server = new ServerSide(2151);
+		}
 		server.start();
 	}
 }
