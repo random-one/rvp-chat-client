@@ -158,6 +158,11 @@ public class ClientView {
         //JFormattedTextField portText = new JFormattedTextField();
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
+                if (portText.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(mainFrame, "Please, enter server port.",  "Error", JOptionPane.ERROR_MESSAGE);
+                    portText.requestFocusInWindow();
+                    return;
+                }
                 client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()));
             	if (!client.start())
             		return;
