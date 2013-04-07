@@ -123,6 +123,25 @@ public class ClientSide extends Thread {
 		return message;
 	}
 
+	class ListenFromServer extends Thread {
+
+		public void run() {
+			System.out.println("waiting for messages from server");
+			while(true) {
+				try {
+					Message msg = (Message) in.readObject();
+					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
+						System.out.println("received from server: " + ((TextMessage)msg).getContent());
+					}
+				} catch(IOException e) {
+					System.out.println("Server has closed the connection: " + e.getMessage());
+					break;
+				} catch(ClassNotFoundException cnfe) {
+					System.out.println(cnfe.getMessage());
+				}
+			}
+		}
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
