@@ -51,4 +51,44 @@ public class ClientConnection extends Thread {
 			}
 		}
 	}
+
+	public void close()
+	{
+		try {
+			if (out != null)
+				out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if (in != null)
+				in.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if (request != null)
+				request.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean writeMessage(Message msg)
+	{
+		if(!request.isConnected()) {
+			close();
+			return false;
+		}
+		try {
+			out.writeObject(msg);
+		}
+		catch(IOException e) {
+			System.out.println("Error sending message to " + msg.getReceiver());
+		}
+		return true;
+	}
 }
