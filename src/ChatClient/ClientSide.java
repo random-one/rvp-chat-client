@@ -1,11 +1,9 @@
 package ChatClient;
-import java.io.EOFException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class ClientSide {
