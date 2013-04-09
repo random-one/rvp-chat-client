@@ -6,7 +6,7 @@ public class Message implements java.io.Serializable {
 	private String sender;
 	private String receiver;
 	private boolean endReached;
-	public enum msgType {TEXT_MESSAGE, FILE_MESSAGE};
+	public enum msgType {TEXT_MESSAGE, FILE_MESSAGE, SYSTEM_MESSAGE};
 	private msgType type;
 
 	public Message() { }
