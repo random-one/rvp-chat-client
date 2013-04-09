@@ -32,6 +32,8 @@ public class ClientView {
     private JTextArea chatLine = null;
     private JTextArea friendList = null;
     private JTextArea chatText = null;
+    private JLabel userLbl = null;
+    private JTextField userText = null;
     private JLabel ipLbl = null;
     private JTextField ipText = null;
     private JLabel portLbl = null;
@@ -151,21 +153,28 @@ public class ClientView {
         
         //Connection & disconnection
         connectionPane = new JPanel(new FlowLayout());
+        userLbl = new JLabel("User Name:");
+        userText = new JTextField("", 10);
         ipLbl = new JLabel("Server IP:");
-        ipText = new JTextField("127.0.0.1");
+        ipText = new JTextField("127.0.0.1", 10);
         portLbl = new JLabel("port:");
         portText = new NumericTextField(5);
         //JFormattedTextField portText = new JFormattedTextField();
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
+                if (userText.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(mainFrame, "Please, enter user name.",  "Error", JOptionPane.ERROR_MESSAGE);
+                    userText.requestFocusInWindow();
+                    return;
+                }
                 if (portText.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(mainFrame, "Please, enter server port.",  "Error", JOptionPane.ERROR_MESSAGE);
                     portText.requestFocusInWindow();
                     return;
                 }
                 client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()));
-            	if (!client.start())
-            		return;
+                if (!client.start())
+                    return;
                 connectBtn.setEnabled(false);
                 disconnectBtn.setEnabled(true);
                 /*
@@ -191,13 +200,14 @@ public class ClientView {
         disconnectBtn.addActionListener(disconnectAction);
         disconnectBtn.setEnabled(false);
         
+        connectionPane.add(userLbl);
+        connectionPane.add(userText);
         connectionPane.add(ipLbl);
         connectionPane.add(ipText);
         connectionPane.add(portLbl);
         connectionPane.add(portText);
         connectionPane.add(connectBtn);
         connectionPane.add(disconnectBtn);
-        
         
         //Main Pane and connections
         mainPane = new JPanel(new BorderLayout());
