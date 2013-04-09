@@ -43,12 +43,12 @@ public class ClientView {
     private JMenu fileMenu = null;
     //other:
     private ClientSide client;
-    
+
     public static void main(String[] args) {
         ClientView view = new ClientView();
         view.GuiInit();
     }
-    
+
     private void GuiInit(){
         //Friend list Panel
         friendPane = new JPanel(new BorderLayout());
@@ -71,11 +71,11 @@ public class ClientView {
         friendList.setLineWrap(true);
         friendList.setEditable(false);
         friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
+
         friendPane.add(addFriend, BorderLayout.NORTH);
         friendPane.add(friendListScroll, BorderLayout.CENTER);
         friendPane.setPreferredSize(new Dimension(200, 300));
-        
+
         //Chat Text
         chatPane = new JPanel(new BorderLayout());
         chatText = new JTextArea(10,35);
@@ -129,7 +129,7 @@ public class ClientView {
         sendButton.setEnabled(true);
         fileButton.addActionListener(openFileDialog);
         fileButton.setEnabled(true);
-        
+
         buttonsPane.add(sendButton);
         buttonsPane.add(fileButton);
         friendPane.add(buttonsPane,BorderLayout.SOUTH);
@@ -144,13 +144,13 @@ public class ClientView {
         //chatPane.add(chatTextScroll, BorderLayout.CENTER);
         //chatPane.add(chatLine, BorderLayout.SOUTH);
         //chatPane.setPreferredSize(new Dimension(500, 200));
-        
+
         //Menu
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
-        
+
         menuBar.add(fileMenu);
-        
+
         //Connection & disconnection
         connectionPane = new JPanel(new FlowLayout());
         userLbl = new JLabel("User Name:");
@@ -187,8 +187,8 @@ public class ClientView {
         connectBtn.setEnabled(true);
         ActionListener disconnectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
-            	client.disconnect();
-            	System.out.println("Client has disconnected from server (socket is closed)...");
+                client.disconnect();
+                System.out.println("Client has disconnected from server (socket is closed)...");
                 connectBtn.setEnabled(true);
                 disconnectBtn.setEnabled(false);
                 /*
@@ -199,7 +199,7 @@ public class ClientView {
         disconnectBtn = new JButton("Disconnect");
         disconnectBtn.addActionListener(disconnectAction);
         disconnectBtn.setEnabled(false);
-        
+
         connectionPane.add(userLbl);
         connectionPane.add(userText);
         connectionPane.add(ipLbl);
@@ -208,7 +208,7 @@ public class ClientView {
         connectionPane.add(portText);
         connectionPane.add(connectBtn);
         connectionPane.add(disconnectBtn);
-        
+
         //Main Pane and connections
         mainPane = new JPanel(new BorderLayout());
         middleSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatSplit, friendPane);
@@ -218,14 +218,14 @@ public class ClientView {
         //mainPane.add(chatPane, BorderLayout.WEST);
         mainPane.add(middleSplit, BorderLayout.CENTER);
         mainPane.add(connectionPane, BorderLayout.NORTH);
-        
+
         mainFrame = new JFrame("RVP Chat Client");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setContentPane(mainPane);
         mainFrame.setSize(mainFrame.getPreferredSize());
         mainFrame.setMinimumSize(new Dimension(800, 600));
         mainFrame.setJMenuBar(menuBar);
-        
+
         mainFrame.setVisible(true);
     }
 }
@@ -233,27 +233,27 @@ public class ClientView {
 class NumericTextField extends TextField
 {
  public NumericTextField (String _initialStr, int _col)
- { 
-    super (_initialStr, _col) ;
-       
+ {
+    super (_initialStr, _col);
+
     this.addKeyListener(new KeyAdapter()
    {
-       public void keyTyped (KeyEvent e) 
+       public void keyTyped (KeyEvent e)
         { 
-            char c = e.getKeyChar() ;
-                
-            if (!   ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) 
-                ||  (c == KeyEvent.VK_ENTER)      || (c == KeyEvent.VK_TAB) 
+            char c = e.getKeyChar();
+
+            if (!   ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)
+                ||  (c == KeyEvent.VK_ENTER)      || (c == KeyEvent.VK_TAB)
                 ||  (Character.isDigit(c)) || (c == '.'))) 
             {
-               e.consume() ;
-           } 
-        } 
+               e.consume();
+           }
+        }
     });
- } 
-        
-  public NumericTextField (int _col) 
-  { 
-    this ("", _col) ; 
-  } 
+ }
+
+  public NumericTextField (int _col)
+  {
+    this ("", _col);
+  }
 }
