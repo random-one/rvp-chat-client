@@ -17,10 +17,11 @@ public class ClientSide {
 	private int port;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide(String server, int port)
+	ClientSide(String server, int port, String userName)
 	{
 		this.server = server;
 		this.port = port;
+		this.clientName = userName;
 	}
 
 	public boolean start()
@@ -40,6 +41,9 @@ public class ClientSide {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
+			
+			SystemMessage s = new SystemMessage(request.getInetAddress().getHostAddress(), server ,clientName, "logged in successfully");
+			out.writeObject(s);
 		} catch(IOException e) {
 			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
 			return false;
@@ -138,7 +142,7 @@ public class ClientSide {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			ClientSide client = new ClientSide("localhost", 2151);
+			ClientSide client = new ClientSide("localhost", 2151, "testUser");
 			if (!client.start())
 				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost

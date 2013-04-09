@@ -172,7 +172,7 @@ public class ClientView {
                     portText.requestFocusInWindow();
                     return;
                 }
-                client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()));
+                client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()), userText.getText());
                 if (!client.start())
                     return;
                 connectBtn.setEnabled(false);
@@ -187,6 +187,8 @@ public class ClientView {
         connectBtn.setEnabled(true);
         ActionListener disconnectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
+                SystemMessage s = new SystemMessage("", ipText.getText(), userText.getText(), "has disconnected");
+                client.sendMessage(s);
                 client.disconnect();
                 System.out.println("Client has disconnected from server (socket is closed)...");
                 connectBtn.setEnabled(true);

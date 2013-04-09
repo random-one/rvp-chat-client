@@ -48,6 +48,10 @@ public class ClientConnection extends Thread {
 				cnfe.printStackTrace();
 			}
 
+			if (message.getType() == Message.msgType.SYSTEM_MESSAGE) {
+				SystemMessage sm = (SystemMessage) message;
+				System.out.println(sm.userName() + " " + sm.content());
+			}
 			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage)message;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
