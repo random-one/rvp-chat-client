@@ -50,7 +50,7 @@ public class ClientConnection extends Thread {
 
 			if (message.getType() == Message.msgType.SYSTEM_MESSAGE) {
 				SystemMessage sm = (SystemMessage) message;
-				System.out.println(sm.userName() + " " + sm.content());
+				System.out.println(sm.getUserName() + " " + sm.getContent());
 			}
 			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage)message;

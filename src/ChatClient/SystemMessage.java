@@ -19,12 +19,12 @@ public class SystemMessage extends Message implements java.io.Serializable {
 		this.content = content;
 	}
 
-	public String userName()
+	public String getUserName()
 	{
 		return userName;
 	}
 
-	public String content()
+	public String getContent()
 	{
 		return content;
 	}
