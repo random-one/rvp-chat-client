@@ -213,6 +213,7 @@ public class ClientView {
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setContentPane(mainPane);
         mainFrame.setSize(mainFrame.getPreferredSize());
+        mainFrame.setMinimumSize(new Dimension(800, 600));
         mainFrame.setJMenuBar(menuBar);
         
         mainFrame.setVisible(true);
