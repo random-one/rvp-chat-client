@@ -15,13 +15,15 @@ public class ClientSide {
 	private Message message;
 	private String server;
 	private int port;
+	private MessageHandler messageHandler;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide(String server, int port, String userName)
+	ClientSide(String server, int port, String userName, MessageHandler messageHandler)
 	{
 		this.server = server;
 		this.port = port;
 		this.clientName = userName;
+		this.messageHandler = messageHandler;
 	}
 
 	public boolean start()
@@ -128,6 +130,7 @@ public class ClientSide {
 					Message msg = (Message) in.readObject();
 					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 						System.out.println("received from server: " + ((TextMessage)msg).getContent());
+						messageHandler.handleMessage(msg);
 					}
 				} catch(IOException e) {
 					System.out.println("Server has closed the connection: " + e.getMessage());
@@ -142,7 +145,7 @@ public class ClientSide {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			ClientSide client = new ClientSide("localhost", 2151, "testUser");
+			ClientSide client = new ClientSide("localhost", 2151, "testUser", null);
 			if (!client.start())
 				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost
