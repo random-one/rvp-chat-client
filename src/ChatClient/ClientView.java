@@ -190,7 +190,7 @@ public class ClientView {
         connectBtn.setEnabled(true);
         ActionListener disconnectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                SystemMessage s = new SystemMessage("", ipText.getText(), userText.getText(), "has disconnected");
+                SystemMessage s = new SystemMessage("", ipText.getText(), userText.getText(), "has disconnected", SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE);
                 client.sendMessage(s);
                 client.disconnect();
                 System.out.println("Client has disconnected from server (socket is closed)...");
