@@ -232,6 +232,15 @@ public class ClientView {
         mainFrame.setJMenuBar(menuBar);
 
         mainFrame.setVisible(true);
+
+        mainFrame.addWindowListener( new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                if (client != null)
+                    client.disconnect();
+            }
+        });
     }
 }
 
