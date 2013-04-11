@@ -12,16 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Scanner;
-
-import org.omg.CORBA.Any;
-import org.omg.CORBA.Object;
-import org.omg.CORBA.TypeCode;
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
 
 public class ServerSide {
 
@@ -31,10 +22,11 @@ public class ServerSide {
 	ObjectOutputStream out;
 	Message message;
 	boolean keepGoing;
+	int port;
 
 	static HashMap<String, ClientConnection> clients;
 
-	ServerSide()
+	ServerSide(int port)
 	{
 		clients = new HashMap<String, ClientConnection>();
 	}
@@ -56,7 +48,7 @@ public class ServerSide {
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 
 				ClientConnection con = new ClientConnection(request);
-				clients.put(request.getInetAddress().getHostAddress(), con);
+				//clients.put(request.getInetAddress().getHostAddress(), con);
 				con.start();
 			}
 
@@ -64,6 +56,8 @@ public class ServerSide {
 				reply.close();
 				for (int x = 0; x < clients.size(); x++) {
 					ClientConnection s = clients.get(x);
+					clients.remove(s.getUserName());
+					System.out.println("Clients size: " + clients.size() + " on disconnect values: " + clients.values().toString() + " " + clients.keySet().toString());
 					s.close();
 				}
 			} catch(Exception e) {
@@ -97,7 +91,13 @@ public class ServerSide {
 
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		ServerSide server = new ServerSide();
+		ServerSide server;
+		if (args.length == 2)
+			server = new ServerSide(Integer.parseInt(args[0]));
+		else {
+			System.out.println("No port provided: server started on port 2151");
+			server = new ServerSide(2151);
+		}
 		server.start();
 	}
 }

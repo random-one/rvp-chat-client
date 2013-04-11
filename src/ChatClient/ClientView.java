@@ -32,6 +32,8 @@ public class ClientView {
     private JTextArea chatLine = null;
     private JTextArea friendList = null;
     private JTextArea chatText = null;
+    private JLabel userLbl = null;
+    private JTextField userText = null;
     private JLabel ipLbl = null;
     private JTextField ipText = null;
     private JLabel portLbl = null;
@@ -41,12 +43,13 @@ public class ClientView {
     private JMenu fileMenu = null;
     //other:
     private ClientSide client;
-    
+    private MessageHandler messageHandler = null;
+
     public static void main(String[] args) {
         ClientView view = new ClientView();
         view.GuiInit();
     }
-    
+
     private void GuiInit(){
         //Friend list Panel
         friendPane = new JPanel(new BorderLayout());
@@ -69,11 +72,11 @@ public class ClientView {
         friendList.setLineWrap(true);
         friendList.setEditable(false);
         friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
+
         friendPane.add(addFriend, BorderLayout.NORTH);
         friendPane.add(friendListScroll, BorderLayout.CENTER);
         friendPane.setPreferredSize(new Dimension(200, 300));
-        
+
         //Chat Text
         chatPane = new JPanel(new BorderLayout());
         chatText = new JTextArea(10,35);
@@ -101,7 +104,7 @@ public class ClientView {
                         {
                                 TextMessage msgToSend = new TextMessage(client.getClientName(),"",chatLine.getText());
                                 client.sendMessage(msgToSend);
-                                chatText.setText(chatText.getText() + "\n" + msgToSend.getContent());
+                                chatText.append("\n" + client.getClientName() + ": " + msgToSend.getContent());
                                 chatLine.setText("");
                                 //TODO:Need to add receiver address. ChatLine is not visible, content cannot be extracted from the chatline to form a msg.
                                 //TODO:See constructor when the msgToSend is formed to make the fix for the content field.
@@ -127,7 +130,7 @@ public class ClientView {
         sendButton.setEnabled(true);
         fileButton.addActionListener(openFileDialog);
         fileButton.setEnabled(true);
-        
+
         buttonsPane.add(sendButton);
         buttonsPane.add(fileButton);
         friendPane.add(buttonsPane,BorderLayout.SOUTH);
@@ -142,25 +145,39 @@ public class ClientView {
         //chatPane.add(chatTextScroll, BorderLayout.CENTER);
         //chatPane.add(chatLine, BorderLayout.SOUTH);
         //chatPane.setPreferredSize(new Dimension(500, 200));
-        
+
         //Menu
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
-        
+
         menuBar.add(fileMenu);
-        
+
+        messageHandler = new MessageHandler(chatText);
+
         //Connection & disconnection
         connectionPane = new JPanel(new FlowLayout());
+        userLbl = new JLabel("User Name:");
+        userText = new JTextField("", 10);
         ipLbl = new JLabel("Server IP:");
-        ipText = new JTextField("127.0.0.1");
+        ipText = new JTextField("127.0.0.1", 10);
         portLbl = new JLabel("port:");
         portText = new NumericTextField(5);
         //JFormattedTextField portText = new JFormattedTextField();
         ActionListener connectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
-            	client = new ClientSide();
-            	if (!client.start())
-            		return;
+                if (userText.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(mainFrame, "Please, enter user name.",  "Error", JOptionPane.ERROR_MESSAGE);
+                    userText.requestFocusInWindow();
+                    return;
+                }
+                if (portText.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(mainFrame, "Please, enter server port.",  "Error", JOptionPane.ERROR_MESSAGE);
+                    portText.requestFocusInWindow();
+                    return;
+                }
+                client = new ClientSide(ipText.getText(), Integer.parseInt(portText.getText()), userText.getText(), messageHandler);
+                if (!client.start())
+                    return;
                 connectBtn.setEnabled(false);
                 disconnectBtn.setEnabled(true);
                 /*
@@ -173,8 +190,10 @@ public class ClientView {
         connectBtn.setEnabled(true);
         ActionListener disconnectAction = new ActionListener(){
             public void actionPerformed(ActionEvent e){
-            	client.disconnect();
-            	System.out.println("Client has disconnected from server (socket is closed)...");
+                SystemMessage s = new SystemMessage("", ipText.getText(), userText.getText(), "has disconnected", SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE);
+                client.sendMessage(s);
+                client.disconnect();
+                System.out.println("Client has disconnected from server (socket is closed)...");
                 connectBtn.setEnabled(true);
                 disconnectBtn.setEnabled(false);
                 /*
@@ -185,15 +204,16 @@ public class ClientView {
         disconnectBtn = new JButton("Disconnect");
         disconnectBtn.addActionListener(disconnectAction);
         disconnectBtn.setEnabled(false);
-        
+
+        connectionPane.add(userLbl);
+        connectionPane.add(userText);
         connectionPane.add(ipLbl);
         connectionPane.add(ipText);
         connectionPane.add(portLbl);
         connectionPane.add(portText);
         connectionPane.add(connectBtn);
         connectionPane.add(disconnectBtn);
-        
-        
+
         //Main Pane and connections
         mainPane = new JPanel(new BorderLayout());
         middleSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatSplit, friendPane);
@@ -203,41 +223,51 @@ public class ClientView {
         //mainPane.add(chatPane, BorderLayout.WEST);
         mainPane.add(middleSplit, BorderLayout.CENTER);
         mainPane.add(connectionPane, BorderLayout.NORTH);
-        
+
         mainFrame = new JFrame("RVP Chat Client");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setContentPane(mainPane);
         mainFrame.setSize(mainFrame.getPreferredSize());
+        mainFrame.setMinimumSize(new Dimension(800, 600));
         mainFrame.setJMenuBar(menuBar);
-        
+
         mainFrame.setVisible(true);
+
+        mainFrame.addWindowListener( new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                if (client != null)
+                    client.disconnect();
+            }
+        });
     }
 }
 
 class NumericTextField extends TextField
 {
  public NumericTextField (String _initialStr, int _col)
- { 
-    super (_initialStr, _col) ;
-       
+ {
+    super (_initialStr, _col);
+
     this.addKeyListener(new KeyAdapter()
    {
-       public void keyTyped (KeyEvent e) 
+       public void keyTyped (KeyEvent e)
         { 
-            char c = e.getKeyChar() ;
-                
-            if (!   ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) 
-                ||  (c == KeyEvent.VK_ENTER)      || (c == KeyEvent.VK_TAB) 
+            char c = e.getKeyChar();
+
+            if (!   ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)
+                ||  (c == KeyEvent.VK_ENTER)      || (c == KeyEvent.VK_TAB)
                 ||  (Character.isDigit(c)) || (c == '.'))) 
             {
-               e.consume() ;
-           } 
-        } 
+               e.consume();
+           }
+        }
     });
- } 
-        
-  public NumericTextField (int _col) 
-  { 
-    this ("", _col) ; 
-  } 
+ }
+
+  public NumericTextField (int _col)
+  {
+    this ("", _col);
+  }
 }

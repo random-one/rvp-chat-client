@@ -9,6 +9,7 @@ public class ClientConnection extends Thread {
 	private Socket request;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
+	private String userName;
 
 	ClientConnection(Socket client) 
 	{
@@ -23,6 +24,16 @@ public class ClientConnection extends Thread {
 		}
 	}
 
+	void setUserName(String userName)
+	{
+		this.userName = userName;
+	}
+
+	String getUserName()
+	{
+		return userName;
+	}
+
 	public void run()
 	{
 		boolean keepGoing = true;
@@ -35,7 +46,10 @@ public class ClientConnection extends Thread {
 				} catch (EOFException e) {
 					try {
 						request.close();
-						ServerSide.clients.remove(request.getInetAddress().getHostAddress());
+						ServerSide.clients.remove(userName);
+
+						System.out.println("client has disconnected");
+//						System.out.println("Clients size after disconnect: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString() + " values: " + ServerSide.clients.values().toString());
 						keepGoing = false;
 						break;
 					} catch (IOException ioe) {
@@ -48,9 +62,26 @@ public class ClientConnection extends Thread {
 				cnfe.printStackTrace();
 			}
 
+			if (message.getType() == Message.msgType.SYSTEM_MESSAGE) {
+				SystemMessage sm = (SystemMessage) message;
+				System.out.println(sm.getUserName() + " " + sm.getContent());
+				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGIN_MESSAGE) {
+					userName = sm.getUserName();
+//					System.out.println("Username is: " + userName);
+//					System.out.println("Enter Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
+					ClientConnection c = ServerSide.clients.get(sm.getSender());
+					ServerSide.clients.remove(sm.getSender());
+					ServerSide.clients.put(userName, c);
+//					System.out.println("Exit Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
+				}
+				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE) {
+						ServerSide.clients.remove(userName);
+//						System.out.println("Clients size: " + ServerSide.clients.keySet().toString());
+				}
+			}
 			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage)message;
-				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+				System.out.println("server sent: '" + tm.getContent() + "' to " + userName);
 
 				if (ServerSide.clients.containsKey(tm.getReceiver())) {
 					ClientConnection c = ServerSide.clients.get(tm.getReceiver());

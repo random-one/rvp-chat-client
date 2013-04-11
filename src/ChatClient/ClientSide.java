@@ -1,11 +1,9 @@
 package ChatClient;
-import java.io.EOFException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class ClientSide {
@@ -15,17 +13,24 @@ public class ClientSide {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Message message;
+	private String server;
+	private int port;
+	private MessageHandler messageHandler;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide()
+	ClientSide(String server, int port, String userName, MessageHandler messageHandler)
 	{
+		this.server = server;
+		this.port = port;
+		this.clientName = userName;
+		this.messageHandler = messageHandler;
 	}
 
 	public boolean start()
 	{
 		try {
 			// TODO: bind each client to the server ip!!
-			request = new Socket("192.168.0.105",2151);
+			request = new Socket(server, port);
 		} catch(UnknownHostException unknownHost) {
 			System.err.println("You are trying to connect to an unknown host!");
 			return false;
@@ -38,6 +43,9 @@ public class ClientSide {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
+			
+			SystemMessage s = new SystemMessage(request.getInetAddress().getHostAddress(), server ,clientName, "logged in successfully", SystemMessage.systemMsgType.SYSTEM_LOGIN_MESSAGE);
+			out.writeObject(s);
 		} catch(IOException e) {
 			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
 			return false;
@@ -122,6 +130,7 @@ public class ClientSide {
 					Message msg = (Message) in.readObject();
 					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 						System.out.println("received from server: " + ((TextMessage)msg).getContent());
+						messageHandler.handleMessage(msg);
 					}
 				} catch(IOException e) {
 					System.out.println("Server has closed the connection: " + e.getMessage());
@@ -136,7 +145,7 @@ public class ClientSide {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			ClientSide client = new ClientSide();
+			ClientSide client = new ClientSide("localhost", 2151, "testUser", null);
 			if (!client.start())
 				return;
 			// TODO: fill sender and receiver IP's of message, empty works only for localhost

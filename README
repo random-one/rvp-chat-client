@@ -5,4 +5,4 @@ Simple Client/Server based chat client with sockets
 Run:
     command line:
 	'java ChatClient.ServerSide' // executes the server code
-	'java ChatClient.ClientSide' // executes the client code
+	'java ChatClient.ClientView' // executes the client code
