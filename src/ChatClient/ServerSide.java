@@ -48,7 +48,7 @@ public class ServerSide {
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 
 				ClientConnection con = new ClientConnection(request);
-				clients.put(request.getInetAddress().getHostAddress(), con);
+				//clients.put(request.getInetAddress().getHostAddress(), con);
 				con.start();
 			}
 
@@ -56,6 +56,8 @@ public class ServerSide {
 				reply.close();
 				for (int x = 0; x < clients.size(); x++) {
 					ClientConnection s = clients.get(x);
+					clients.remove(s.getUserName());
+					System.out.println("Clients size: " + clients.size() + " on disconnect values: " + clients.values().toString() + " " + clients.keySet().toString());
 					s.close();
 				}
 			} catch(Exception e) {
