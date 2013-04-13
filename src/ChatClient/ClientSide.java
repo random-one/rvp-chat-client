@@ -38,7 +38,7 @@ public class ClientSide {
 			e.printStackTrace();
 		}
 
-		System.out.println("Connected?!");
+		System.out.println("Connected...");
 		try {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
@@ -109,7 +109,7 @@ public class ClientSide {
 			message = (Message)in.readObject();
 			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage) message;
-				System.out.println("received from server: " + tm.getContent());
+				System.out.println("Received from server: " + tm.getContent());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -124,16 +124,16 @@ public class ClientSide {
 	class ListenFromServer extends Thread {
 
 		public void run() {
-			System.out.println("waiting for messages from server");
+			System.out.println("Waiting for messages from server...");
 			while(true) {
 				try {
 					Message msg = (Message) in.readObject();
 					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
-						System.out.println("received from server: " + ((TextMessage)msg).getContent());
+						System.out.println("Received from server: " + ((TextMessage)msg).getContent());
 						messageHandler.handleMessage(msg);
 					}
 				} catch(IOException e) {
-					System.out.println("Server has closed the connection: " + e.getMessage());
+					System.out.println("Server has closed the connection...: " + e.getMessage());
 					break;
 				} catch(ClassNotFoundException cnfe) {
 					System.out.println(cnfe.getMessage());
