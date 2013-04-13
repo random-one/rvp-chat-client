@@ -12,15 +12,17 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ServerSide {
 
-	ServerSocket reply;
-	Socket request;
-	ObjectInputStream in;
-	ObjectOutputStream out;
-	Message message;
+	private ServerSocket reply;
+	private Socket request;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
+	private Message message;
 	boolean keepGoing;
 	int port;
 
@@ -54,10 +56,10 @@ public class ServerSide {
 
 			try {
 				reply.close();
-				for (int x = 0; x < clients.size(); x++) {
-					ClientConnection s = clients.get(x);
-					clients.remove(s.getUserName());
-					System.out.println("Clients size: " + clients.size() + " on disconnect values: " + clients.values().toString() + " " + clients.keySet().toString());
+				Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(clients);
+				for (int x = 0; x < clientsMap.size(); x++) {
+					ClientConnection s = clientsMap.get(x);
+					clientsMap.remove(s.getUserName());
 					s.close();
 				}
 			} catch(Exception e) {
@@ -70,15 +72,16 @@ public class ServerSide {
 
 	public void sendMessage(Message msg)
 	{
+		Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(clients);
 		try
 		{
 			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage) msg;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
-				if (clients.containsKey(tm.getReceiver())) {
+				if (clientsMap.containsKey(tm.getReceiver())) {
 					System.out.println("printing to client");
 					out.flush();
-					ClientConnection connection = clients.get(tm.getReceiver());
+					ClientConnection connection = clientsMap.get(tm.getReceiver());
 					connection.writeMessage(msg);
 				}
 			}

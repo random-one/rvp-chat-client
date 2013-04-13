@@ -1,5 +1,7 @@
 package ChatClient;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.Map;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -38,7 +40,7 @@ public class ClientConnection extends Thread {
 	{
 		boolean keepGoing = true;
 		Message message = null;
-
+		Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(ServerSide.clients);
 		while(keepGoing) {
 			try {
 				try {
@@ -46,9 +48,8 @@ public class ClientConnection extends Thread {
 				} catch (EOFException e) {
 					try {
 						request.close();
-						ServerSide.clients.remove(userName);
-
-						System.out.println("client has disconnected");
+						clientsMap.remove(userName);
+						//System.out.println("client has disconnected");
 //						System.out.println("Clients size after disconnect: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString() + " values: " + ServerSide.clients.values().toString());
 						keepGoing = false;
 						break;
@@ -69,22 +70,23 @@ public class ClientConnection extends Thread {
 					userName = sm.getUserName();
 //					System.out.println("Username is: " + userName);
 //					System.out.println("Enter Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
-					ClientConnection c = ServerSide.clients.get(sm.getSender());
-					ServerSide.clients.remove(sm.getSender());
-					ServerSide.clients.put(userName, c);
+					ClientConnection c = (ClientConnection) clientsMap.get(sm.getSender());
+					clientsMap.remove(sm.getSender());
+					clientsMap.put(userName, c);
 //					System.out.println("Exit Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
 				}
 				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE) {
-						ServerSide.clients.remove(userName);
-//						System.out.println("Clients size: " + ServerSide.clients.keySet().toString());
+						clientsMap.remove(userName);
+//						System.out.println("Clients size: " + clientsMap.keySet().toString());
+						System.out.println("Clients size: " + clientsMap.size() + " on disconnect values: " + clientsMap.values().toString() + " " + clientsMap.keySet().toString());
 				}
 			}
 			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage)message;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + userName);
 
-				if (ServerSide.clients.containsKey(tm.getReceiver())) {
-					ClientConnection c = ServerSide.clients.get(tm.getReceiver());
+				if (clientsMap.containsKey(tm.getReceiver())) {
+					ClientConnection c = clientsMap.get(tm.getReceiver());
 					c.writeMessage(message);
 				}
 			}
