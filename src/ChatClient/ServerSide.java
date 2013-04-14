@@ -26,7 +26,7 @@ public class ServerSide {
 	boolean keepGoing;
 	int port;
 
-	static HashMap<String, ClientConnection> clients;
+	static Map<String, ClientConnection> clients;
 
 	ServerSide(int port)
 	{
