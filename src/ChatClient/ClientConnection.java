@@ -132,4 +132,12 @@ public class ClientConnection extends Thread {
 		}
 		return true;
 	}
+
+	public synchronized String getOnlineUsers()
+	{
+		String userList = "";
+		for (String user : ServerSide.clients.keySet())
+			userList += user + ",";
+		return userList;
+	}
 }
