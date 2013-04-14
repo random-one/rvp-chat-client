@@ -153,7 +153,7 @@ public class ClientView {
 
         menuBar.add(fileMenu);
 
-        messageHandler = new MessageHandler(chatText);
+        messageHandler = new MessageHandler(chatText, userListModel);
 
         //Connection & disconnection
         connectionPane = new JPanel(new FlowLayout());
