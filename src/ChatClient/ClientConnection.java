@@ -73,16 +73,12 @@ public class ClientConnection extends Thread {
 					ClientConnection c = (ClientConnection) clientsMap.get(sm.getSender());
 					clientsMap.remove(sm.getSender());
 					clientsMap.put(userName, c);
-
-					String userList = getOnlineUsers();
-					
-					SystemMessage m = new SystemMessage("", userName, userName, userList, SystemMessage.systemMsgType.SYSTEM_USERLIST_MESSAGE);
-					for (ClientConnection connection : clientsMap.values())
-						connection.writeMessage(m);
+					updateOnlineUsers();
 //					System.out.println("Exit Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
 				}
 				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE) {
 						clientsMap.remove(userName);
+						updateOnlineUsers();
 //						System.out.println("Clients size: " + clientsMap.keySet().toString());
 						System.out.println("Clients size: " + clientsMap.size() + " on disconnect values: " + clientsMap.values().toString() + " " + clientsMap.keySet().toString());
 				}

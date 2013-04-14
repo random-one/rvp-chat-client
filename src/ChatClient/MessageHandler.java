@@ -23,9 +23,9 @@ public class MessageHandler {
 			if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_USERLIST_MESSAGE) {
 				String[] users = sm.getContent().split(",");
 				Arrays.sort(users);
+				userModel.clear();
 				for (String user : users)
-					if (!userModel.contains(user))
-						userModel.addElement(user);
+					userModel.addElement(user);
 			}
 		}
 	}
