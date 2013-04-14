@@ -43,8 +43,7 @@ public class ClientSide {
 			out = new ObjectOutputStream(request.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(request.getInputStream());
-			
-			SystemMessage s = new SystemMessage(request.getInetAddress().getHostAddress(), server ,clientName, "logged in successfully", SystemMessage.systemMsgType.SYSTEM_LOGIN_MESSAGE);
+			SystemMessage s = new SystemMessage(request.getLocalAddress().getHostAddress(), server ,clientName, "logged in successfully", SystemMessage.systemMsgType.SYSTEM_LOGIN_MESSAGE);
 			out.writeObject(s);
 		} catch(IOException e) {
 			System.out.println("Exception creating new Input/output Streams: " + e.getMessage());
@@ -130,6 +129,9 @@ public class ClientSide {
 					Message msg = (Message) in.readObject();
 					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 						System.out.println("Received from server: " + ((TextMessage)msg).getContent());
+						messageHandler.handleMessage(msg);
+					}
+					if (msg.getType() == Message.msgType.SYSTEM_MESSAGE) {
 						messageHandler.handleMessage(msg);
 					}
 				} catch(IOException e) {

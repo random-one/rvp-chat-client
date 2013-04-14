@@ -7,7 +7,7 @@ public class SystemMessage extends Message implements java.io.Serializable {
 	private String content;
 	private systemMsgType type;
 	
-	public enum systemMsgType { SYSTEM_LOGIN_MESSAGE, SYSTEM_LOGOUT_MESSAGE, SYSTEM_ERROR_MESSAGE };
+	public enum systemMsgType { SYSTEM_LOGIN_MESSAGE, SYSTEM_LOGOUT_MESSAGE, SYSTEM_ERROR_MESSAGE, SYSTEM_USERLIST_MESSAGE };
 
 	public SystemMessage(String sender, String receiver, String userName)
 	{

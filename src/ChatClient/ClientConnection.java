@@ -73,10 +73,12 @@ public class ClientConnection extends Thread {
 					ClientConnection c = (ClientConnection) clientsMap.get(sm.getSender());
 					clientsMap.remove(sm.getSender());
 					clientsMap.put(userName, c);
+					updateOnlineUsers();
 //					System.out.println("Exit Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
 				}
 				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE) {
 						clientsMap.remove(userName);
+						updateOnlineUsers();
 //						System.out.println("Clients size: " + clientsMap.keySet().toString());
 						System.out.println("Clients size: " + clientsMap.size() + " on disconnect values: " + clientsMap.values().toString() + " " + clientsMap.keySet().toString());
 				}
@@ -131,5 +133,22 @@ public class ClientConnection extends Thread {
 			System.out.println("Error sending message to " + msg.getReceiver());
 		}
 		return true;
+	}
+
+	public synchronized String getOnlineUsers()
+	{
+		String userList = "";
+		for (String user : ServerSide.clients.keySet())
+			userList += user + ",";
+		return userList;
+	}
+	
+	public synchronized void updateOnlineUsers() {
+		String userList = getOnlineUsers();
+
+		for (ClientConnection connection : ServerSide.clients.values()) {
+			SystemMessage m = new SystemMessage("", connection.getUserName(), connection.getUserName(), userList, SystemMessage.systemMsgType.SYSTEM_USERLIST_MESSAGE);
+			connection.writeMessage(m);
+		}
 	}
 }
