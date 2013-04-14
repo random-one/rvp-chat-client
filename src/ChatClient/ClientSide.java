@@ -131,6 +131,9 @@ public class ClientSide {
 						System.out.println("Received from server: " + ((TextMessage)msg).getContent());
 						messageHandler.handleMessage(msg);
 					}
+					if (msg.getType() == Message.msgType.SYSTEM_MESSAGE) {
+						messageHandler.handleMessage(msg);
+					}
 				} catch(IOException e) {
 					System.out.println("Server has closed the connection...: " + e.getMessage());
 					break;
