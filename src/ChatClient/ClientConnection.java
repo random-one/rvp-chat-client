@@ -146,4 +146,13 @@ public class ClientConnection extends Thread {
 			userList += user + ",";
 		return userList;
 	}
+	
+	public synchronized void updateOnlineUsers() {
+		String userList = getOnlineUsers();
+
+		for (ClientConnection connection : ServerSide.clients.values()) {
+			SystemMessage m = new SystemMessage("", connection.getUserName(), connection.getUserName(), userList, SystemMessage.systemMsgType.SYSTEM_USERLIST_MESSAGE);
+			connection.writeMessage(m);
+		}
+	}
 }
