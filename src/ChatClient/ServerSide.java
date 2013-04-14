@@ -50,7 +50,7 @@ public class ServerSide {
 				System.out.println("Server accepted a connection! " + request.getInetAddress().getHostAddress());
 
 				ClientConnection con = new ClientConnection(request);
-				//clients.put(request.getInetAddress().getHostAddress(), con);
+				clients.put(request.getInetAddress().getHostAddress(), con);
 				con.start();
 			}
 
