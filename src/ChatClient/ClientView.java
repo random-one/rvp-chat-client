@@ -30,7 +30,8 @@ public class ClientView {
     private JFrame mainFrame = null;
     //Text:
     private JTextArea chatLine = null;
-    private JTextArea friendList = null;
+    private JList friendList = null;
+    private DefaultListModel userListModel = null;
     private JTextArea chatText = null;
     private JLabel userLbl = null;
     private JTextField userText = null;
@@ -68,9 +69,9 @@ public class ClientView {
         };
         addFriend.addActionListener(addFriendToList);
         addFriend.setEnabled(true);
-        friendList = new JTextArea();
-        friendList.setLineWrap(true);
-        friendList.setEditable(false);
+        userListModel = new DefaultListModel();
+        friendList = new JList(userListModel);
+        friendList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         friendListScroll = new JScrollPane(friendList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         friendPane.add(addFriend, BorderLayout.NORTH);
@@ -193,6 +194,7 @@ public class ClientView {
                 SystemMessage s = new SystemMessage("", ipText.getText(), userText.getText(), "has disconnected", SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE);
                 client.sendMessage(s);
                 client.disconnect();
+                userListModel.clear();
                 System.out.println("Client has disconnected from server (socket is closed)...");
                 connectBtn.setEnabled(true);
                 disconnectBtn.setEnabled(false);
