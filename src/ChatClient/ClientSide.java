@@ -15,10 +15,10 @@ public class ClientSide {
 	private Message message;
 	private String server;
 	private int port;
-	private MessageHandler messageHandler;
+	private IMessageHandler messageHandler;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide(String server, int port, String userName, MessageHandler messageHandler)
+	public ClientSide(String server, int port, String userName, IMessageHandler messageHandler)
 	{
 		this.server = server;
 		this.port = port;
@@ -129,11 +129,8 @@ public class ClientSide {
 					Message msg = (Message) in.readObject();
 					if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 						System.out.println("Received from server: " + ((TextMessage)msg).getContent());
-						messageHandler.handleMessage(msg);
 					}
-					if (msg.getType() == Message.msgType.SYSTEM_MESSAGE) {
-						messageHandler.handleMessage(msg);
-					}
+					messageHandler.handleMessage(msg);
 				} catch(IOException e) {
 					System.out.println("Server has closed the connection...: " + e.getMessage());
 					break;

@@ -1,6 +1,6 @@
 package ChatClient;
 
-public class TextMessage extends Message implements java.io.Serializable {
+public class TextMessage extends Message implements java.io.Serializable, P2PMessage {
 
 	private static final long serialVersionUID = 1L;
 	private String content;

@@ -1,11 +1,16 @@
 package ChatClient;
 
-public class FileMessage extends Message implements java.io.Serializable {
+
+public class FileMessage extends Message implements java.io.Serializable, P2PMessage {
 
 	private static final long serialVersionUID = 1L;
 	private String fileName;
-	private byte[] buffer;
-	//TODO: add compareTo to determine if a file with this name is transfered
+	private int size;
+	private byte[] buffer = new byte[10240];
+
+	public FileMessage() {
+		setType(Message.msgType.FILE_MESSAGE);
+	}
 
 	public String getFileName() {
 		return fileName;
@@ -19,8 +24,15 @@ public class FileMessage extends Message implements java.io.Serializable {
 		return buffer;
 	}
 
-	public FileMessage(String sender, String receiver, String fileName) {
-		super(sender, receiver, msgType.FILE_MESSAGE);
-		this.fileName = fileName;
+	public void setBuffer(byte[] buffer) {
+		this.buffer = buffer;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 }

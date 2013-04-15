@@ -40,7 +40,7 @@ public class ClientConnection extends Thread {
 	{
 		boolean keepGoing = true;
 		Message message = null;
-		Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(ServerSide.clients);
+		Map<String, ClientConnection> clients = ServerSide.clients;
 		while(keepGoing) {
 			try {
 				try {
@@ -48,7 +48,7 @@ public class ClientConnection extends Thread {
 				} catch (EOFException e) {
 					try {
 						request.close();
-						clientsMap.remove(userName);
+						clients.remove(userName);
 						//System.out.println("client has disconnected");
 //						System.out.println("Clients size after disconnect: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString() + " values: " + ServerSide.clients.values().toString());
 						keepGoing = false;
@@ -70,25 +70,25 @@ public class ClientConnection extends Thread {
 					userName = sm.getUserName();
 //					System.out.println("Username is: " + userName);
 //					System.out.println("Enter Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
-					ClientConnection c = (ClientConnection) clientsMap.get(sm.getSender());
-					clientsMap.remove(sm.getSender());
-					clientsMap.put(userName, c);
-					updateOnlineUsers();
+					ClientConnection c = (ClientConnection) clients.get(sm.getSender());
+					clients.remove(sm.getSender());
+					clients.put(userName, c);
+					//FIXME: updateOnlineUsers();
 //					System.out.println("Exit Clients logging in: " + ServerSide.clients.size() + " keys:" + ServerSide.clients.keySet().toString());
 				}
 				if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_LOGOUT_MESSAGE) {
-						clientsMap.remove(userName);
-						updateOnlineUsers();
-//						System.out.println("Clients size: " + clientsMap.keySet().toString());
-						System.out.println("Clients size: " + clientsMap.size() + " on disconnect values: " + clientsMap.values().toString() + " " + clientsMap.keySet().toString());
+						clients.remove(userName);
+						//updateOnlineUsers();
+//						System.out.println("Clients size: " + clients.keySet().toString());
+						System.out.println("Clients size: " + clients.size() + " on disconnect values: " + clients.values().toString() + " " + clients.keySet().toString());
 				}
 			}
-			if (message.getType() == Message.msgType.TEXT_MESSAGE) {
-				TextMessage tm = (TextMessage)message;
-				System.out.println("server sent: '" + tm.getContent() + "' to " + userName);
+			if (message instanceof P2PMessage) {
+				P2PMessage tm = (P2PMessage)message;
+				//System.out.println("server sent: '" + tm.getContent() + "' to " + userName);
 
-				if (clientsMap.containsKey(tm.getReceiver())) {
-					ClientConnection c = clientsMap.get(tm.getReceiver());
+				if (clients.containsKey(tm.getReceiver())) {
+					ClientConnection c = clients.get(tm.getReceiver());
 					c.writeMessage(message);
 				}
 			}

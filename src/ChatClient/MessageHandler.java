@@ -4,7 +4,7 @@ import java.util.Arrays;
 import javax.swing.JTextArea;
 import javax.swing.DefaultListModel;
 
-public class MessageHandler {
+public class MessageHandler implements IMessageHandler {
 	private JTextArea textArea;
 	private DefaultListModel userModel;
 
@@ -14,11 +14,16 @@ public class MessageHandler {
 		this.userModel = userModel;
 	}
 
-	protected void handleMessage(Message m)
+	public void handleMessage(Message m)
 	{
-		if (m.getType() == Message.msgType.TEXT_MESSAGE)
+		if (m instanceof TextMessage) {
 			textArea.append("\n" + m.getSender() + ": "  + ((TextMessage)m).getContent());
-		if (m.getType() == Message.msgType.SYSTEM_MESSAGE) {
+		}
+		if (m instanceof FileMessage) {
+			FileMessage fm = (FileMessage) m;
+			System.out.println("file message received:" + fm.getFileName());
+		}
+		if (m instanceof SystemMessage) {
 			SystemMessage sm = (SystemMessage)m;
 			if (sm.getSytemMessageType() == SystemMessage.systemMsgType.SYSTEM_USERLIST_MESSAGE) {
 				String[] users = sm.getContent().split(",");
