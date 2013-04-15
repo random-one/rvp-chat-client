@@ -1,6 +1,7 @@
 package ChatClient;
 
-public class FileMessage extends Message implements java.io.Serializable {
+
+public class FileMessage extends Message implements java.io.Serializable, P2PMessage {
 
 	private static final long serialVersionUID = 1L;
 	private String fileName;

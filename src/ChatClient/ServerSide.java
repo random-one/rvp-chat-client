@@ -73,9 +73,9 @@ public class ServerSide {
 	{
 		try
 		{
-			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
-				TextMessage tm = (TextMessage) msg;
-				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
+			if (msg instanceof P2PMessage) {
+				P2PMessage tm = (P2PMessage) msg;
+				//System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
 				if (clients.containsKey(tm.getReceiver())) {
 					System.out.println("printing to client");
 					out.flush();
