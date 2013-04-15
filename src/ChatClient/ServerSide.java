@@ -26,17 +26,17 @@ public class ServerSide {
 	boolean keepGoing;
 	int port;
 
-	static Map<String, ClientConnection> clients;
+	static Map<String, ClientConnection> clients = Collections.synchronizedMap(new HashMap<String, ClientConnection>());
 
 	ServerSide(int port)
 	{
-		clients = new HashMap<String, ClientConnection>();
+		this.port = port;
 	}
 
 	public void start()
 	{
 		try {
-			reply = new ServerSocket(2151, 5);
+			reply = new ServerSocket(port, 5);
 
 			System.out.println("Server is waiting to make a connection...!");
 
@@ -56,10 +56,9 @@ public class ServerSide {
 
 			try {
 				reply.close();
-				Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(clients);
-				for (int x = 0; x < clientsMap.size(); x++) {
-					ClientConnection s = clientsMap.get(x);
-					clientsMap.remove(s.getUserName());
+				for (int x = 0; x < clients.size(); x++) {
+					ClientConnection s = clients.get(x);
+					clients.remove(s.getUserName());
 					s.close();
 				}
 			} catch(Exception e) {
@@ -72,16 +71,15 @@ public class ServerSide {
 
 	public void sendMessage(Message msg)
 	{
-		Map<String, ClientConnection> clientsMap = Collections.synchronizedMap(clients);
 		try
 		{
 			if (msg.getType() == Message.msgType.TEXT_MESSAGE) {
 				TextMessage tm = (TextMessage) msg;
 				System.out.println("server sent: '" + tm.getContent() + "' to " + tm.getReceiver());
-				if (clientsMap.containsKey(tm.getReceiver())) {
+				if (clients.containsKey(tm.getReceiver())) {
 					System.out.println("printing to client");
 					out.flush();
-					ClientConnection connection = clientsMap.get(tm.getReceiver());
+					ClientConnection connection = clients.get(tm.getReceiver());
 					connection.writeMessage(msg);
 				}
 			}
