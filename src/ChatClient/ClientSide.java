@@ -15,10 +15,10 @@ public class ClientSide {
 	private Message message;
 	private String server;
 	private int port;
-	private MessageHandler messageHandler;
+	private IMessageHandler messageHandler;
 	//TODO: add Set<FileMessage> receivedFiles;
 
-	ClientSide(String server, int port, String userName, MessageHandler messageHandler)
+	public ClientSide(String server, int port, String userName, IMessageHandler messageHandler)
 	{
 		this.server = server;
 		this.port = port;
